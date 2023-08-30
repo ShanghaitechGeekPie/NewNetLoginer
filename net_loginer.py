@@ -16,16 +16,6 @@ class NetAuthenticator:
         self.config_file = config_file
         self.session = requests.Session()
 
-    def get_ip_address(self, interface):
-        network_interfaces = psutil.net_if_addrs()
-
-        if interface in network_interfaces:
-            ipv4_address = network_interfaces[interface][0].address
-            return ipv4_address
-        else:
-            print("Error getting IP address for network interface: " + interface)
-            sys.exit(1)
-
     def load_config(self):
         try:
             with open(self.config_file, 'r') as config_file:
@@ -41,29 +31,30 @@ class NetAuthenticator:
             print(f"Config file not found. Please create config.json by copying config.json.example.")
             sys.exit(1)
 
-    def get_ip_and_verify_url(self):
-        self.ip_address = self.get_ip_address(self.interface)
-        
-        if not self.ip_address:
-            print(f"No IP address found for interface {self.interface}.")
+    def get_ip_address(self):
+        network_interfaces = psutil.net_if_addrs()
+
+        if self.interface in network_interfaces:
+            ipv4_address = network_interfaces[self.interface][0].address
+            self.ip_address = ipv4_address
+            print(f"IP address of {self.interface}: {self.ip_address}")
+        else:
+            print("Error getting IP address for network interface: " + self.interface)
             sys.exit(1)
 
-        print(f"IP address of {self.interface}: {self.ip_address}")
-
-        self.verify_url = f"{NET_AUTH_BASEURL}/portal?uaddress={self.ip_address}&ac-ip=0"
-        print("Verify URL:", self.verify_url)
-
     def get_push_page_id_and_ssid(self):
-
-        redirected_verify_url = self.session.get(self.verify_url, allow_redirects=True).url
-        parsed_redirected_url = urlparse(self.session.get(redirected_verify_url).url)
+        verify_url = f"{NET_AUTH_BASEURL}/portal?uaddress={self.ip_address}&ac-ip=0"
+        print("Verify URL:", verify_url)
+    
+        redirected_verify = self.session.get(verify_url, allow_redirects=True)
+        parsed_redirected_url = urlparse(redirected_verify.url)
         query_params = parse_qs(parsed_redirected_url.query)
 
         self.push_page_id = query_params.get("pushPageId", [None])[0]
         self.ssid = query_params.get("ssid", [None])[0]
 
-        print("pushPageId:", self.push_page_id)
-        print("ssid:", self.ssid)
+        print("Get pushPageId:", self.push_page_id)
+        print("Get ssid:", self.ssid)
 
     def get_verify_code(self):
         image_url = f"{NET_AUTH_BASEURL}/portalauth/verificationcode?uaddress={self.ip_address}"
@@ -79,7 +70,7 @@ class NetAuthenticator:
 
     def perform_login(self):
         self.load_config()
-        self.get_ip_and_verify_url()
+        self.get_ip_address()
         self.get_push_page_id_and_ssid()
     
         login_data = {
