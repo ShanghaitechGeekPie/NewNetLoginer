@@ -1,0 +1,4 @@
+ddddocr==1.0.6
+psutil==5.9.5
+Requests==2.31.0
+Pillow==9.5.0
