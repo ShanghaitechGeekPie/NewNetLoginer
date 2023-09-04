@@ -1,12 +1,14 @@
 #!/usr/bin/env python
 
-import sys
-import psutil
 import ddddocr
-import onnxruntime
-import requests
 import json
+import onnxruntime
+import os
+import psutil
+import requests
+import sys
 from io import BytesIO
+from dotenv import dotenv_values
 from urllib.parse import urlparse, parse_qs
 
 NET_AUTH_BASEURL = "https://net-auth.shanghaitech.edu.cn:19008"
@@ -17,26 +19,23 @@ class NetAuthenticator:
         self.session = requests.Session()
 
     def load_config(self):
+        config = dotenv_values(".env")
         try:
-            with open(self.config_file, 'r') as config_file:
-                config_data = json.load(config_file)
-                self.user_id = config_data["id"]
-                self.password = config_data["password"]
-                self.interface = config_data["interface"]
-                print("User ID:", self.user_id)
-                print("Password:", self.password)
-                print("Interface:", self.interface)
-
-        except FileNotFoundError:
-            print(f"Config file not found. Please create config.json by copying config.json.example.")
+            self.user_id = config['EGATE_ID']
+            self.password = config["EGATE_PASSWORD"]
+            self.interface = config["INTERFACE"]
+        except KeyError:
+            print(f"Environment not set. Please check if you have copied .env from .env.example!")
             sys.exit(1)
+        print("User ID:", self.user_id)
+        print("Password:", self.password)
+        print("Interface:", self.interface)
 
     def get_ip_address(self):
         network_interfaces = psutil.net_if_addrs()
 
         if self.interface in network_interfaces:
-            ipv4_address = network_interfaces[self.interface][0].address
-            self.ip_address = ipv4_address
+            self.ip_address = network_interfaces[self.interface][0].address
             print(f"IP address of {self.interface}: {self.ip_address}")
         else:
             print("Error getting IP address for network interface: " + self.interface)

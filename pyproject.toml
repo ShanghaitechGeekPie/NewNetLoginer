@@ -1,0 +1,19 @@
+[project]
+authors = [
+    {name = "wenxuanjun", email = "wenxuanjun@yahoo.com"},
+]
+dependencies = [
+    "ddddocr==1.0.6",
+    "psutil==5.9.5",
+    "Requests==2.31.0",
+    "Pillow==9.5.0",
+    "python-dotenv>=1.0.0",
+]
+requires-python = ">=3.8"
+readme = "README.md"
+license = {text = "MIT"}
+
+
+[build-system]
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"

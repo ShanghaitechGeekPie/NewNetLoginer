@@ -2,31 +2,36 @@
 
 适用于新验证系统的上海科技大学网络自动验证登录器。
 
-## 使用
+## 安装依赖
 
-建议使用 `venv`：
+使用 `pdm`：
+
+```bash
+pdm install
+```
+
+或者使用传统方式：
 
 ```bash
 python -m venv venv
 source venv/bin/activate
 ```
 
-安装依赖：
-
 ```bash
 pip install -r requirements.txt
 ```
 
-创建 `config.json` 并编辑：
+## 使用
+
+复制 `.env` 并编辑：
 
 ```bash
-cp config.json.example config.json
-vim config.json
+cp .env.example .env
+vim .env
 ```
 
-授予执行权限并运行：
+运行：
 
 ```bash
-chmod +x net_loginer.py
-./net_loginer.py
+python src/main.py
 ```
