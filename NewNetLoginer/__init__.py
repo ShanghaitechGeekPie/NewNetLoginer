@@ -19,7 +19,10 @@ class NetAuthenticator:
         self.session = requests.Session()
 
     def load_config(self):
-        config = dotenv_values(".env")
+        config = {
+            **dotenv_values(".env"),
+            **os.environ,
+        }
         try:
             self.user_id = config['EGATE_ID']
             self.password = config["EGATE_PASSWORD"]
