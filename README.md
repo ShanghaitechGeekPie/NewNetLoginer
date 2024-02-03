@@ -33,5 +33,5 @@ vim .env
 运行：
 
 ```bash
-python src/main.py
+python src/__init__.py
 ```

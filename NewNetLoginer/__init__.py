@@ -91,6 +91,9 @@ class NetAuthenticator:
         else:
             print("Login was not successful, please check manually")
 
-if __name__ == "__main__":
+def main():
     authenticator = NetAuthenticator()
     authenticator.perform_login()
+
+if __name__ == "__main__":
+    main()
